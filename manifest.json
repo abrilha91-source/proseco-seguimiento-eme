@@ -1,0 +1,16 @@
+{
+  "name": "Seguimiento PROSECO · EME",
+  "short_name": "PROSECO EME",
+  "description": "Seguimiento trimestral de los indicadores PROSECO de la Escuela Militar de Enfermería con semáforo, acciones y evidencias. Funciona sin conexión; los datos se quedan en el dispositivo.",
+  "lang": "es-MX",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#F6F2EE",
+  "theme_color": "#4A1424",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"},
+    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml"}
+  ]
+}
