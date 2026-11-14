@@ -129,3 +129,15 @@ table.t{border-collapse:collapse;width:100%;font-size:13.5px}
   #printArea .firmas div:nth-child(1){text-align:left}#printArea .firmas div:nth-child(2){text-align:center}#printArea .firmas div:nth-child(3){text-align:right}
   @page{size:letter landscape;margin:12mm}
 }
+
+.net{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;border:1px solid var(--line);border-radius:99px;padding:4px 10px;color:var(--muted);white-space:nowrap}
+.net i{width:9px;height:9px;border-radius:50%;background:var(--v)}
+.net.off{background:var(--a-bg);color:#7A4E00;border-color:#F0C66B}.net.off i{background:var(--a)}
+.offbar{margin:0;background:var(--a-bg);color:#6A4300;border-bottom:1px solid #F0C66B;padding:9px 26px;font-size:13.5px;font-weight:600}
+.btn[hidden]{display:none}
+.plat{border:1px solid var(--line);border-radius:var(--rad);padding:16px 18px;background:var(--surface);box-shadow:var(--sh)}
+.plat.yo{outline:3px solid var(--oro)}
+.plat h2 .tag{margin-left:6px;vertical-align:2px}
+.okbox{background:var(--v-bg);border-left:4px solid var(--v);padding:10px 12px;border-radius:8px;font-size:13.5px}
+.kbd{display:inline-block;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;padding:0 6px;font-size:12.5px;background:var(--surface-2)}
+@media (max-width:900px){.net span{display:none}.offbar{padding:9px 16px}}

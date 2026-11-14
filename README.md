@@ -1,4 +1,4 @@
-# Seguimiento PROSECO · EME (v1.0)
+# Seguimiento PROSECO · EME (v1.1)
 
 App web instalable (PWA) para llevar el seguimiento trimestral de los indicadores del **Programa Interno de Seguimiento y Control en el Ejército, Fuerza Aérea y Guardia Nacional (PROSECO)**, Formato para Planteles Militares (Evaluación Educativa y Administrativa).
 
@@ -11,3 +11,6 @@ App web instalable (PWA) para llevar el seguimiento trimestral de los indicadore
 - Guía interactiva y sección de fuentes.
 
 **Privacidad:** la app se publica vacía. Solo contiene el catálogo de rubros del formato. Los datos y archivos se guardan únicamente en el dispositivo (localStorage + IndexedDB); no se envía nada a internet.
+
+## Instalar y usar sin internet (v1.1)
+Botón «⤓ Instalar app» (Android/Chrome/Edge) y pestaña «Instalar y sin internet» con pasos para Android, iPhone/iPad y Windows. Todos los archivos quedan en caché (`proseco-seguimiento-eme-v1.1`); después de abrirla una vez con internet funciona sin conexión. Indicador «En línea / Sin conexión».

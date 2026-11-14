@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#4A1424">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="PROSECO EME">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="description" content="Seguimiento trimestral de los indicadores PROSECO. Funciona sin conexión.">
 <title>Seguimiento PROSECO · EME</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -21,17 +25,21 @@
       <button role="tab" data-v="dg" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg><span>Datos generales</span></button>
       <button role="tab" data-v="tri" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><span>Trimestres</span></button>
       <button role="tab" data-v="gui" aria-selected="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14M12 17.5v.01"/></svg><span>Guía</span></button>
+      <button role="tab" data-v="ins" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M12 7v7M9 11l3 3 3-3M10 18.5h4"/></svg><span>Instalar y sin internet</span></button>
       <button role="tab" data-v="res" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5"/><path d="M5 14v5h14v-5"/></svg><span>Respaldo y exportar</span></button>
     </nav>
-    <div class="railfoot"><span id="storeSt">Datos solo en este dispositivo</span><span>v1.0</span></div>
+    <div class="railfoot"><span id="storeSt">Datos solo en este dispositivo</span><span id="verTag">v1.1</span></div>
   </aside>
   <div class="main">
     <header class="topbar">
       <div class="ttl"><p id="gDate"></p><strong id="gTri">Sin trimestre</strong></div>
       <label class="trisel">Trimestre<select id="selTri" aria-label="Trimestre activo"></select></label>
+      <span class="net" id="net" role="status" aria-live="polite"><i></i><span>En línea</span></span>
+      <button class="btn oro sm" id="btnInstall" type="button" hidden>⤓ Instalar app</button>
       <button class="btn ghost sm" id="btnNewTri" type="button">+ Nuevo trimestre</button>
       <button class="btn ghost sm" id="btnTour" type="button" title="Recorrido guiado">▶ Guía interactiva</button>
     </header>
+    <p class="offbar" id="offbar" hidden>Sin conexión: tus datos siguen guardados en este equipo. Puedes seguir trabajando; los archivos y respaldos también funcionan sin internet.</p>
     <main id="view"><div class="empty"><strong>Cargando…</strong></div></main>
   </div>
 </div>

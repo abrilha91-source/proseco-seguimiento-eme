@@ -1,6 +1,6 @@
-/* Seguimiento PROSECO · EME v1.0 — datos solo en el dispositivo (localStorage + IndexedDB). */
+/* Seguimiento PROSECO · EME v1.1 — datos solo en el dispositivo (localStorage + IndexedDB). */
 "use strict";
-const VER = "1.0";
+const VER = "1.1";
 const LS = "proseco-eme-v1";
 const CAT = window.PROSECO_CATALOGO || [];
 const CATMAP = Object.fromEntries(CAT.map(c => [c.id, c]));
@@ -103,8 +103,8 @@ function sinTri() { return `<div class="card empty"><strong>Aún no hay trimestr
 
 function render() {
   header(); badge(); const v = $("#view"); v.onclick = null; v.onchange = null; const t = T();
-  if (!t && !["gui", "res", "tri"].includes(vista)) { v.innerHTML = sinTri(); return; }
-  ({ pan: vPan, ind: vInd, dg: vDg, tri: vTri, gui: vGui, res: vRes })[vista](v, t);
+  if (!t && !["gui", "res", "tri", "ins"].includes(vista)) { v.innerHTML = sinTri(); return; }
+  ({ pan: vPan, ind: vInd, dg: vDg, tri: vTri, gui: vGui, res: vRes, ins: vIns })[vista](v, t);
 }
 
 /* ---------- Panorama ---------- */
@@ -124,7 +124,8 @@ function vPan(v, t) {
    <div class="card"><h2>Por área responsable</h2>${Object.keys(areas).sort().map(a => { const cc = conteo(t, areas[a]); return `<h3>${esc(a)} <small class="hint">(${cc.tot})</small></h3>${barra(cc)}`; }).join("")}
    <p class="hint" style="margin-top:8px">El «Área responsable» se captura en cada indicador. Mientras esté vacío, aparece como «Sin asignar».</p></div>
   </div>
-  <div class="card"><h2>Últimas acciones registradas</h2>${accs.length ? `<table class="t"><tr><th>Fecha</th><th>No.</th><th>Acción</th><th>Responsable</th><th class="c">Archivos</th></tr>${accs.slice(0, 8).map(({ i, a }) => `<tr><td>${fFecha(a.fecha)}</td><td><button class="lnk" onclick="abrirInd('${i}')">${noTxt(i)}</button></td><td>${esc(a.desc)}</td><td>${esc(a.resp || "")}</td><td class="c">${a.adj.length}</td></tr>`).join("")}</table>` : `<p class="hint">Todavía no hay acciones. Abre un indicador y usa «+ Agregar acción» para registrar lo que se hizo y adjuntar evidencias.</p>`}</div>`;
+  <div class="card"><h2>Últimas acciones registradas</h2>${accs.length ? `<table class="t"><tr><th>Fecha</th><th>No.</th><th>Acción</th><th>Responsable</th><th class="c">Archivos</th></tr>${accs.slice(0, 8).map(({ i, a }) => `<tr><td>${fFecha(a.fecha)}</td><td><button class="lnk" onclick="abrirInd('${i}')">${noTxt(i)}</button></td><td>${esc(a.desc)}</td><td>${esc(a.resp || "")}</td><td class="c">${a.adj.length}</td></tr>`).join("")}</table>` : `<p class="hint">Todavía no hay acciones. Abre un indicador y usa «+ Agregar acción» para registrar lo que se hizo y adjuntar evidencias.</p>`}</div>
+  <p class="hint">🔒 Los datos y archivos adjuntos se guardan solo en este equipo. Descarga un <button class="lnk" onclick="go('res')">respaldo completo</button> al terminar cada sesión.</p>`;
   $$("#kpis .kpi").forEach(b => b.onclick = () => { F.sem = b.dataset.k; go("ind"); });
 }
 const noTxt = i => { const c = CATMAP[i]; return (c.sec === "admin" ? "A-" : "") + c.no; };
@@ -324,6 +325,7 @@ function vGui(v) {
    <p class="hint">Ojo: en el formato muchas preguntas son de «¿Se han presentado casos…?», donde la respuesta deseable es «No». El color indica si el plantel está bien en ese rubro, no si la respuesta es «Sí».</p>
   </details>
   <details><summary>Paso a paso</summary><ol class="steps">
+   <li><b>Instala la app</b> en tu equipo (pestaña «Instalar y sin internet») para usarla sin conexión.</li>
    <li><b>Crea el trimestre</b> con «+ Nuevo trimestre» (ej. «1/er. Trimestre 2027 · Sep., Oct., Nov.»). Si ya tienes uno, puedes copiar su estructura y el área responsable.</li>
    <li><b>Captura los datos generales</b> en la pestaña «Datos generales».</li>
    <li><b>Revisa cada indicador</b> en «Indicadores» y ponle color.</li>
@@ -332,6 +334,13 @@ function vGui(v) {
    <li><b>Consulta el Panorama</b> para ver cuántos van en rojo, amarillo y verde.</li>
    <li><b>Exporta</b> a Excel o imprime, y <b>descarga el respaldo completo</b> con los archivos al terminar cada sesión de trabajo.</li>
    <li>Al iniciar el siguiente trimestre, créalo copiando la estructura y compara el avance en «Trimestres».</li></ol></details>
+  <details><summary>Instalar la app y usarla sin internet</summary>
+   <p>La app se puede <b>instalar</b> en celular, tableta o computadora y funciona <b>sin internet</b> después de abrirla una vez con conexión.</p>
+   <ul><li><b>Android (Chrome):</b> botón «⤓ Instalar app» arriba, o menú ⋮ → «Instalar app» / «Agregar a pantalla principal».</li>
+   <li><b>iPhone / iPad (Safari):</b> botón Compartir (cuadro con flecha ↑) → «Agregar a inicio» → «Agregar».</li>
+   <li><b>Computadora Windows (Chrome o Edge):</b> ícono de instalar al final de la barra de direcciones, o el botón «⤓ Instalar app».</li></ul>
+   <p>Para comprobar que funciona sin internet: abre la app instalada, activa el modo avión y vuelve a abrirla. Arriba verás «Sin conexión» y podrás seguir trabajando.</p>
+   <p><button class="btn sm" onclick="go('ins')">Ver la guía de instalación paso a paso</button></p></details>
   <details><summary>¿Dónde se guardan los datos?</summary><p>Solo en este dispositivo y navegador: los textos en el almacenamiento local y los archivos adjuntos en la base de datos del navegador (IndexedDB). No se envía nada a internet. Si borras los datos del navegador o cambias de equipo, necesitas el <b>respaldo completo (.zip)</b> para recuperarlos.</p></details>
   <details><summary>Fuentes</summary><ul>
    <li>Formato «Indicadores PROSECO 4/o. Trimestre de la E.M.E. Jun., Jul., Ago.» (Noviembre 2026), proporcionado por el plantel. Estructura de datos generales e indicadores tomada de ahí.</li>
@@ -348,6 +357,7 @@ async function storageInfo() {
 }
 function vRes(v) {
   v.innerHTML = `<h1>Respaldo y exportar</h1><p class="sub">Todo se guarda solo en este dispositivo. Descarga respaldos con frecuencia.</p>
+  <div class="warnbox" style="margin-bottom:16px">Los datos y los archivos adjuntos viven <b>solo en este equipo y en este navegador</b>. Si se borran los datos del navegador, se desinstala la app o cambias de equipo, solo podrás recuperarlos con un <b>respaldo completo (.zip)</b>. Descárgalo al terminar cada sesión.</div>
   <div class="card"><h2>Almacenamiento</h2><p class="storage" id="stInfo">Calculando…</p><button class="btn ghost sm" id="bPersist">Pedir al navegador que no borre los datos</button></div>
   <div class="grid g2">
   <div class="card"><h2>Respaldo completo (.zip)</h2><p class="hint">Incluye todos los trimestres, semáforos, acciones y <b>los archivos adjuntos</b>. Úsalo para cambiar de equipo.</p><div class="row" style="margin-top:10px"><button class="btn" id="bZip">Descargar respaldo completo</button></div></div>
@@ -469,6 +479,8 @@ function imprimir() {
 /* ---------- Guía interactiva (recorrido) ---------- */
 const PASOS = [
   { v: null, sel: ".rail .tabs", t: "Menú", p: "Aquí cambias de sección: Panorama, Indicadores, Datos generales, Trimestres, Guía y Respaldo." },
+  { v: null, sel: "#net", t: "Con o sin internet", p: "Aquí ves si hay conexión. Sin internet la app sigue funcionando: verás «Sin conexión» y tus datos siguen guardados en este equipo." },
+  { v: null, sel: () => $("#btnInstall").hidden ? '.tabs [data-v="ins"]' : "#btnInstall", t: "Instalar la app", p: "Instálala en tu celular, tableta o computadora para abrirla como cualquier app y usarla sin internet. Si no aparece el botón, sigue los pasos de la pestaña «Instalar y sin internet»." },
   { v: null, sel: ".trisel", t: "Trimestre activo", p: "PROSECO se evalúa cada trimestre. Elige aquí el trimestre que estás trabajando; todo lo que captures se guarda en ese trimestre." },
   { v: null, sel: "#btnNewTri", t: "Nuevo trimestre", p: "Crea un trimestre nuevo. Puedes copiar la estructura y el área responsable del anterior; las acciones y evidencias empiezan vacías." },
   { v: "pan", sel: "#kpis", t: "Panorama con semáforo", p: "Cuántos indicadores hacen falta (rojo), se están trabajando (amarillo) o ya se cumplieron (verde). Toca una tarjeta para ver esos indicadores." },
@@ -479,6 +491,7 @@ const PASOS = [
   { v: "dg", sel: "#dgT", t: "Datos generales", p: "Los datos del organismo al final del trimestre, con la misma estructura del formato." },
   { v: "tri", sel: "#view", t: "Trimestres y comparativo", p: "Administra los trimestres y compara cómo cambió el semáforo de un trimestre a otro." },
   { v: "res", sel: "#bZip", t: "Respaldo completo", p: "Descarga un .zip con todo, incluidos los archivos. Hazlo al terminar cada sesión: los datos solo viven en este dispositivo." },
+  { v: "ins", sel: "#insPlat", t: "Guía de instalación", p: "Pasos para Android, iPhone/iPad y computadora con Windows, y cómo comprobar que funciona sin internet. Tu equipo aparece resaltado." },
   { v: "gui", sel: ".guide details", t: "Qué es PROSECO y fuentes", p: "Aquí está la explicación del programa, el significado del semáforo y las fuentes consultadas." }];
 let paso = 0;
 function tour(i = 0) {
@@ -487,7 +500,7 @@ function tour(i = 0) {
   if (P.v && !T() && ["pan", "ind", "dg"].includes(P.v)) return tour(i + 1);
   if (P.v && vista !== P.v) go(P.v);
   L.hidden = false;
-  requestAnimationFrame(() => { const el = $(P.sel); if (!el) return tour(i + 1); el.scrollIntoView({ block: "center" }); setTimeout(() => {
+  requestAnimationFrame(() => { const el = $(typeof P.sel === "function" ? P.sel() : P.sel); if (!el) return tour(i + 1); el.scrollIntoView({ block: "center" }); setTimeout(() => {
     const r = el.getBoundingClientRect(); const h = $("#tourHole"); const pad = 6; const hh = Math.min(r.height, innerHeight - 40);
     Object.assign(h.style, { left: r.left - pad + "px", top: r.top - pad + "px", width: r.width + 2 * pad + "px", height: hh + 2 * pad + "px" });
     const b = $("#tourBox"); b.innerHTML = `<h3>${P.t}</h3><p>${P.p}</p><div class="tb"><small>${i + 1} de ${PASOS.length}</small><span class="row"><button class="btn ghost sm" id="tSkip">Salir</button>${i ? `<button class="btn ghost sm" id="tPrev">Atrás</button>` : ""}<button class="btn sm" id="tNext">${i === PASOS.length - 1 ? "Terminar" : "Siguiente"}</button></span></div>`;
@@ -499,8 +512,69 @@ function tour(i = 0) {
 }
 addEventListener("keydown", e => { if ($("#tourLayer").hidden) return; if (e.key === "Escape") tour(PASOS.length); if (e.key === "ArrowRight") tour(paso + 1); if (e.key === "ArrowLeft" && paso) tour(paso - 1); });
 
+/* ---------- Instalar y sin conexión ---------- */
+let instEvt = null;
+const esStandalone = () => matchMedia("(display-mode: standalone)").matches || matchMedia("(display-mode: window-controls-overlay)").matches || navigator.standalone === true;
+function plataforma() { const u = navigator.userAgent; if (/iPhone|iPad|iPod/.test(u) || (/Macintosh/.test(u) && navigator.maxTouchPoints > 1)) return "ios"; if (/Android/.test(u)) return "android"; return "pc"; }
+function btnInstall() { $("#btnInstall").hidden = esStandalone(); }
+addEventListener("beforeinstallprompt", e => { e.preventDefault(); instEvt = e; btnInstall(); if (vista === "ins") render(); });
+addEventListener("appinstalled", () => { instEvt = null; toast("App instalada. Ya puedes abrirla desde tu pantalla de inicio o menú."); btnInstall(); if (vista === "ins") render(); });
+matchMedia("(display-mode: standalone)").addEventListener?.("change", () => { btnInstall(); render(); });
+async function instalar() {
+  if (instEvt) { instEvt.prompt(); const r = await instEvt.userChoice.catch(() => ({})); instEvt = null; if (r.outcome === "accepted") toast("Instalando…"); btnInstall(); return; }
+  go("ins"); toast(plataforma() === "ios" ? "En iPhone/iPad: Compartir → «Agregar a inicio»" : "Usa el menú del navegador → «Instalar app»");
+}
+$("#btnInstall").onclick = instalar;
+/* navigator.onLine no basta (p. ej. red local sin internet): se confirma pidiendo un archivo pequeño al servidor de la app, sin caché. */
+let enLinea = navigator.onLine;
+async function sondeo() {
+  let on = navigator.onLine;
+  if (on && location.protocol.startsWith("http")) { try { const c = new AbortController(); const tm = setTimeout(() => c.abort(), 5000); const r = await fetch("manifest.json?ping=" + Date.now(), { cache: "no-store", signal: c.signal }); clearTimeout(tm); on = r.ok; } catch (e) { on = false; } }
+  if (on !== enLinea) { enLinea = on; toast(on ? "Conexión restablecida" : "Sin conexión: tus datos siguen guardados en este equipo"); }
+  red();
+}
+setInterval(sondeo, 30000);
+function red() { const on = enLinea; const n = $("#net"); n.classList.toggle("off", !on); n.querySelector("span").textContent = on ? "En línea" : "Sin conexión"; n.title = on ? "Con conexión a internet" : "Sin conexión: tus datos siguen guardados en este equipo"; $("#offbar").hidden = on; }
+addEventListener("online", sondeo); addEventListener("offline", sondeo); addEventListener("focus", sondeo); document.addEventListener("visibilitychange", () => { if (!document.hidden) sondeo(); });
+async function swEstado() { if (!("serviceWorker" in navigator)) return { ok: false, txt: "Este navegador no permite el modo sin internet." }; const r = await navigator.serviceWorker.getRegistration(); if (!r) return { ok: false, txt: "Preparando el modo sin internet… abre la app una vez con conexión." };
+  const ks = await caches.keys().catch(() => []); const c = ks.find(k => k.startsWith("proseco-seguimiento-eme-")); return c ? { ok: true, txt: `Lista para usarse sin internet (caché ${c}).` } : { ok: false, txt: "Descargando archivos para usar sin internet…" }; }
+function vIns(v) {
+  const p = plataforma(); const inst = esStandalone();
+  const yo = k => p === k ? " yo" : ""; const tg = k => p === k ? `<span class="tag acc">tu equipo</span>` : "";
+  v.innerHTML = `<h1>Instalar la app y usarla sin internet</h1><p class="sub">Versión ${VER}. Instálala una vez y ábrela como cualquier otra app, incluso sin conexión.</p>
+  <div class="card"><div class="row" style="justify-content:space-between"><div>
+   <h2 style="margin:0 0 4px">${inst ? "✅ Ya estás usando la app instalada" : "Estado de este equipo"}</h2>
+   <p class="hint" id="swSt">Revisando…</p><p class="hint">Conexión: <b>${enLinea ? "en línea" : "sin conexión"}</b></p></div>
+   ${inst ? "" : `<button class="btn oro" id="bInsNow">⤓ Instalar app</button>`}</div>
+   ${!inst && !instEvt ? `<p class="hint" style="margin-top:8px">Si el botón no abre la ventana de instalación, sigue los pasos de tu equipo aquí abajo.</p>` : ""}</div>
+  <div class="grid g3" id="insPlat">
+   <div class="plat${yo("android")}"><h2>📱 Android (Chrome)${tg("android")}</h2><ol class="steps">
+    <li>Abre la app en <b>Chrome</b> con internet.</li><li>Toca <b>«⤓ Instalar app»</b> arriba, o el menú <span class="kbd">⋮</span> → <b>«Instalar app»</b> (en algunos equipos dice «Agregar a pantalla principal»).</li>
+    <li>Confirma con <b>«Instalar»</b>.</li><li>Busca el ícono <b>PROSECO EME</b> en tu pantalla de inicio.</li></ol></div>
+   <div class="plat${yo("ios")}"><h2>🍎 iPhone / iPad (Safari)${tg("ios")}</h2><ol class="steps">
+    <li>Abre la app en <b>Safari</b> (en iPhone debe ser Safari).</li><li>Toca <b>Compartir</b> <span class="kbd">□↑</span> (abajo en iPhone, arriba en iPad).</li>
+    <li>Desliza y toca <b>«Agregar a inicio»</b>.</li><li>Toca <b>«Agregar»</b>. El ícono aparece en tu pantalla de inicio.</li></ol></div>
+   <div class="plat${yo("pc")}"><h2>💻 Computadora Windows (Chrome o Edge)${tg("pc")}</h2><ol class="steps">
+    <li>Abre la app en <b>Chrome</b> o <b>Edge</b> con internet.</li><li>Haz clic en el ícono de instalar <span class="kbd">⊕</span> / <span class="kbd">🖥↓</span> al final de la barra de direcciones, o en <b>«⤓ Instalar app»</b>.</li>
+    <li>En Edge también: menú <span class="kbd">…</span> → <b>Aplicaciones</b> → <b>«Instalar este sitio como una aplicación»</b>. En Chrome: menú <span class="kbd">⋮</span> → <b>«Transmitir, guardar y compartir»</b> → <b>«Instalar página como app»</b>.</li>
+    <li>Queda en el menú Inicio y puedes anclarla a la barra de tareas.</li></ol></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+   <div class="card"><h2>Comprobar que funciona sin internet</h2><ol class="steps">
+    <li>Abre la app <b>una vez con internet</b> y espera a que aquí diga «Lista para usarse sin internet».</li><li>Cierra la app.</li>
+    <li>Activa el <b>modo avión</b> o desconecta el internet (Wi-Fi o cable).</li><li>Abre la app instalada: arriba verás <b>«Sin conexión»</b> y la barra amarilla.</li>
+    <li>Cambia un color del semáforo o agrega una acción: todo se guarda igual.</li></ol></div>
+   <div class="card"><h2>Tus datos</h2><div class="warnbox">Los datos y los archivos adjuntos viven <b>solo en este equipo</b>. Instalar la app no los sube a internet ni los pasa a otros equipos. <b>Haz respaldos:</b> «Respaldo y exportar» → «Descargar respaldo completo» (.zip con archivos).</div>
+    <p class="hint" style="margin-top:10px">Si desinstalas la app o borras los datos del navegador, se borra lo guardado. Para pasar todo a otro equipo, importa ahí el respaldo .zip.</p>
+    <p class="hint">Actualizaciones: cuando se publique una versión nueva, se descarga sola la siguiente vez que abras la app con internet; tus datos se conservan.</p>
+    <button class="btn sm" onclick="go('res')">Ir a Respaldo y exportar</button></div></div>`;
+  const b = $("#bInsNow"); if (b) b.onclick = instalar;
+  swEstado().then(e => { const el = $("#swSt"); if (el) el.innerHTML = (e.ok ? "✅ " : "⏳ ") + esc(e.txt); });
+}
+
 /* ---------- Inicio ---------- */
+$("#verTag").textContent = "v" + VER; btnInstall(); red(); sondeo();
 render(); storageInfo();
 if (!S.guiaVista) setTimeout(() => tour(0), 500);
 if ("serviceWorker" in navigator && location.protocol !== "file:") navigator.serviceWorker.register("sw.js").catch(() => { });
-window.dlgTrimestre = dlgTrimestre; window.go = go; window.tour = tour; window.abrirInd = abrirInd;
+window.instalar = instalar; window.dlgTrimestre = dlgTrimestre; window.go = go; window.tour = tour; window.abrirInd = abrirInd;
